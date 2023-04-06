@@ -1,0 +1,525 @@
+//MIXINS
+
+//1 repeat-str()
+//2 grid-child()
+//3 col-width()
+//4 col-props()
+//5 columns-loop()
+//6 grid-base()
+//7 buildGrid()
+//8 grid-system()
+//9 gridAdvanced()
+
+$breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+);
+
+// VARiABLES
+// desktop grid
+$grid-desktop-columns: 12;
+$grid-desktop-sideMargin: 80px;
+$grid-desktop-gutter: 40px;
+$grid-desktop-breakpoint: 1400px;
+
+// tablet grid
+$grid-tablet-columns: 12;
+$grid-tablet-sideMargin: 60px;
+$grid-tablet-gutter: 30px;
+$grid-tablet-breakpoint: 1020px;
+
+// mobile grid
+$grid-mobile-columns: 4;
+$grid-mobile-sideMargin: 32px;
+$grid-mobile-gutter: 20px;
+$grid-mobile-breakpoint: 620px;
+
+// pixels to % variables
+$desk-grid-width: 100% -
+  (($grid-desktop-sideMargin * 2 / $grid-desktop-breakpoint) * 100%);
+$tab-grid-width: 100% -
+  (($grid-tablet-sideMargin * 2 / $grid-tablet-breakpoint) * 100%);
+$mob-grid-width: 100% -
+  (($grid-mobile-sideMargin * 2 / $grid-mobile-breakpoint) * 100%);
+
+$desk-gutter: (
+  (
+      $grid-desktop-gutter /
+        ($grid-desktop-breakpoint - ($grid-desktop-sideMargin * 2))
+    ) * 100%
+);
+$tab-gutter: (
+  (
+      $grid-tablet-gutter /
+        ($grid-tablet-breakpoint - ($grid-tablet-sideMargin * 2))
+    ) * 100%
+);
+$mob-gutter: (
+  (
+      $grid-mobile-gutter /
+        ($grid-mobile-breakpoint - ($grid-mobile-sideMargin * 2))
+    ) * 100%
+);
+
+@mixin grid__container {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+
+  &--xs {
+    width: 100%;
+  }
+
+  &--sm {
+    width: 540px;
+  }
+
+  &--md {
+    width: 720px;
+  }
+
+  &--lg {
+    width: 960px;
+  }
+
+  &--xl {
+    width: 1140px;
+  }
+}
+
+@mixin grid__row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+
+  &--reverse-xs {
+    flex-direction: row-reverse;
+  }
+
+  &--reverse-sm {
+    flex-direction: row-reverse;
+  }
+
+  &--reverse-md {
+    flex-direction: row-reverse;
+  }
+
+  &--reverse-lg {
+    flex-direction: row-reverse;
+  }
+
+  &--reverse-xl {
+    flex-direction: row-reverse;
+  }
+}
+
+@mixin grid__col($breakpoint, $width) {
+  flex: 0 0 100%;
+  max-width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+
+  @media (min-width: map-get($breakpoints, $breakpoint)) {
+    flex: 0 0 $width;
+    max-width: $width;
+  }
+}
+
+@mixin grid__col-offset($breakpoint, $offset) {
+  margin-left: $offset;
+
+  @media (min-width: map-get($breakpoints, $breakpoint)) {
+    margin-left: $offset;
+  }
+}
+
+@mixin grid__col-auto {
+  flex: 0 0 auto;
+  width: auto;
+  max-width: 100%;
+}
+
+@mixin grid__visible($breakpoint) {
+  display: none;
+
+  @media (min-width: map-get($breakpoints, $breakpoint)) {
+    display: block;
+  }
+}
+
+@mixin grid__hidden($breakpoint) {
+  display: block;
+
+  @media (min-width: map-get($breakpoints, $breakpoint)) {
+    display: none;
+  }
+}
+
+@mixin grid__align-items($breakpoint, $value) {
+  align-items: $value;
+
+  @media (min-width: map-get($breakpoints, $breakpoint)) {
+    align-items: $value;
+  }
+}
+
+@mixin grid__align-self($breakpoint, $value) {
+  align-self: $value;
+
+  @media (min-width: map-get($breakpoints, $breakpoint)) {
+    align-self: $value;
+  }
+}
+@function repeat-str($str, $times) {
+  @if $times > 0 {
+    @return $str + repeat-str($str, $times - 1);
+  }
+  @return "";
+}
+
+.grid {
+  grid-template-areas: repeat-str("a-block ", 3) "b-block c-block d-block";
+  // output: grid-template-areas: "a-block a-block a-block " "b-block c-block d-block";
+}
+
+@mixin grid-child($col-start, $col-end, $row-start, $row-end) {
+  -ms-grid-column: $col-start;
+  -ms-grid-column-span: $col-end - $col-start;
+  -ms-grid-row: $row-start;
+  -ms-grid-row-span: $row-end - $row-start;
+  grid-column: #{$col-start}/#{$col-end};
+  grid-row: #{$row-start}/#{$row-end};
+}
+
+.child {
+  @include grid-child(2, 3, 2, 3);
+}
+
+// VARiABLES
+// desktop grid
+$grid-desktop-columns: 12;
+$grid-desktop-sideMargin: 80px;
+$grid-desktop-gutter: 40px;
+$grid-desktop-breakpoint: 1400px;
+
+// tablet grid
+$grid-tablet-columns: 12;
+$grid-tablet-sideMargin: 60px;
+$grid-tablet-gutter: 30px;
+$grid-tablet-breakpoint: 1020px;
+
+// mobile grid
+$grid-mobile-columns: 4;
+$grid-mobile-sideMargin: 32px;
+$grid-mobile-gutter: 20px;
+$grid-mobile-breakpoint: 620px;
+
+// pixels to % variables
+$desk-grid-width: 100% -
+  (($grid-desktop-sideMargin * 2 / $grid-desktop-breakpoint) * 100%);
+$tab-grid-width: 100% -
+  (($grid-tablet-sideMargin * 2 / $grid-tablet-breakpoint) * 100%);
+$mob-grid-width: 100% -
+  (($grid-mobile-sideMargin * 2 / $grid-mobile-breakpoint) * 100%);
+
+$desk-gutter: (
+  (
+      $grid-desktop-gutter /
+        ($grid-desktop-breakpoint - ($grid-desktop-sideMargin * 2))
+    ) * 100%
+);
+$tab-gutter: (
+  (
+      $grid-tablet-gutter /
+        ($grid-tablet-breakpoint - ($grid-tablet-sideMargin * 2))
+    ) * 100%
+);
+$mob-gutter: (
+  (
+      $grid-mobile-gutter /
+        ($grid-mobile-breakpoint - ($grid-mobile-sideMargin * 2))
+    ) * 100%
+);
+
+// FUNCTIONS AND MiXINS
+@function col-width($i, $columns) {
+  @return 100% / $columns * $i;
+}
+
+@mixin col-props($i, $columns, $gutter) {
+  box-sizing: border-box;
+  width: col-width($i, $columns);
+  padding-left: $gutter/2;
+  padding-right: $gutter/2;
+}
+
+@mixin columns-loop($name, $columns, $gutter) {
+  @for $i from 0 through $columns {
+    &-#{$name}-#{$i} {
+      @include col-props($i, $columns, $gutter);
+    }
+    &-#{$name}-shift-#{$i} {
+      margin-left: col-width($i, $columns,);
+    }
+  }
+}
+
+@mixin grid-base($width) {
+  box-sizing: border-box;
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+  flex-wrap: wrap;
+  max-width: $grid-desktop-breakpoint;
+  width: $width;
+}
+
+@mixin grid-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+
+  &--xs {
+    width: 100%;
+  }
+
+  &--sm {
+    width: 540px;
+  }
+
+  &--md {
+    width: 720px;
+  }
+
+  &--lg {
+    width: 960px;
+  }
+
+  &--xl {
+    width: 1140px;
+  }
+}
+
+// CLASSES
+.grid {
+  @include grid-base($desk-grid-width);
+  @media screen and (max-width: $grid-tablet-breakpoint) {
+    width: $tab-grid-width;
+  }
+  @media screen and (max-width: $grid-mobile-breakpoint) {
+    width: $mob-grid-width;
+  }
+  &-0 {
+    @include grid-base(100%);
+  }
+}
+
+.col {
+  @include columns-loop(desk, $grid-desktop-columns, $desk-gutter);
+  @media screen and (max-width: $grid-tablet-breakpoint) {
+    @include columns-loop(tab, $grid-tablet-columns, $tab-gutter);
+  }
+  @media screen and (max-width: $grid-mobile-breakpoint) {
+    @include columns-loop(mob, $grid-mobile-columns, $mob-gutter);
+  }
+}
+
+@function buildGrid($j, $i) {
+  $template: null;
+
+  @for $x from 0 to $j {
+    $string: "";
+
+    @for $y from 0 to $i {
+      @if $y > 0 {
+        $string: $string + " ";
+      }
+      $string: $string + $x + "-" + $y;
+    }
+
+    $template: $template $string;
+  }
+
+  @return $template;
+}
+
+#grid-small {
+  grid-template-areas: buildGrid(5, 5);
+}
+
+#grid-large {
+  grid-template-areas: buildGrid(25, 25);
+}
+
+@mixin grid-system() {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -15px;
+  margin-right: -15px;
+}
+
+@mixin gridAdvanced($align-items: null, $justify-content: null) {
+  @if $align-items {
+    align-items: $align-items;
+  }
+
+  @if $justify-content {
+    justify-content: $justify-content;
+  }
+}
+
+@mixin grid-child($width, $padding: 15px) {
+  width: $width;
+  padding-left: $padding;
+  padding-right: $padding;
+}
+
+// @mixin repeat-str($str, $times, $separator: '') {
+//   $result: '';
+//   @for $i from 1 through $times {
+//     $result: $result + $str + if($i < $times, $separator, '');
+//   }
+//   @return $result;
+// }
+
+// @mixin col-width($col-num) {
+//   @return percentage($col-num / $grid-desktop-columns);
+// }
+
+// @mixin col-props($columns) {
+//   // flex: 0 0 col-wid($i, $columns);
+//   width: col-width($i, columns);
+// }
+
+// @mixin columns-loop() {
+//   @for $i from 1 through $grid-desktop-columns {
+//     &__col-#{$i} {
+//       @include col-props($i);
+//     }
+//   }
+// }
+
+// @mixin grid-base() {
+//   &__container {
+//     @include grid-system();
+//   }
+
+//   &__row {
+//     @include grid-system();
+//   }
+
+//   @include columns-loop();
+// }
+
+@mixin buildGrid() {
+  .grid {
+    @include grid-base();
+
+    @each $breakpoint, $breakpoint-value in $grid-breakpoints {
+      @media (min-width: $breakpoint-value) {
+        &__container--#{$breakpoint} {
+          @include grid-system();
+        }
+
+        &__row--#{$breakpoint} {
+          @include grid-system();
+        }
+
+        @for $i from 1 through $grid-desktop-columns {
+          &__col-#{$breakpoint}-#{$i} {
+            @include col-props($i);
+          }
+        }
+      }
+    }
+  }
+}
+
+// Usage
+//@include buildGrid();
+
+@mixin grid-col-offset($size) {
+  margin-left: percentage($size / $grid-desktop-columns);
+}
+
+@mixin grid-col-auto {
+  flex: 0 0 auto;
+  width: auto;
+}
+
+// @mixin buildGrid() {
+//   .grid {
+//     @include grid-base();
+
+//     @each $breakpoint, $breakpoint-value in $grid-breakpoints {
+//       @media (min-width: $breakpoint-value) {
+//         &__container--#{$breakpoint} {
+//           @include grid-system();
+//         }
+
+//         &__row--#{$breakpoint} {
+//           @include grid-system();
+//         }
+
+//         &__row--#{$breakpoint}--reverse {
+//           flex-direction: row-reverse;
+//         }
+
+//         @for $i from 1 through $grid-desktop-columns {
+//           &__col-#{$breakpoint}-#{$i} {
+//             @include col-props($i);
+//           }
+
+//           &__col-#{$breakpoint}-offset-#{$i} {
+//             @include grid-col-offset($i);
+//           }
+//         }
+
+//         &__col-#{$breakpoint}-auto {
+//           @include grid-col-auto;
+//         }
+
+//         &__visible-#{$breakpoint} {
+//           display: block;
+//         }
+
+//         &__hidden-#{$breakpoint} {
+//           display: none;
+//         }
+
+//         &__align-items-top-#{$breakpoint} {
+//           align-items: flex-start;
+//         }
+
+//         &__align-items-middle-#{$breakpoint} {
+//           align-items: center;
+//         }
+
+//         &__align-items-bottom-#{$breakpoint} {
+//           align-items: flex-end;
+//         }
+
+//         &__align-self-top-#{$breakpoint} {
+//           align-self: flex-start;
+//         }
+
+//         &__align-self-middle-#{$breakpoint} {
+//           align-self: center;
+//         }
+
+//         &__align-self-bottom-#{$breakpoint} {
+//           align-self: flex-end;
+//         }
+//       }
+//     }
+//   }
+// }
+
+// // Usage
+// @include buildGrid();
